@@ -1,6 +1,9 @@
 *.pyc
-./venv/
+# Virtual environments
 venv/
-__pycache__/
-./wkienv/
 wkienv/
+.venv/
+env/
+# Environmental variables / Secrets
+.env
+.env.local
