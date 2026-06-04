@@ -4,6 +4,7 @@ from rapidfuzz import process, fuzz
 import logging
 
 
+
 logger = logging.getLogger(__name__)
 #GLOBAL VARIABLES
 PRICING_DATA_PATH = "pricings.json"
@@ -33,9 +34,10 @@ def validate_model(model: str, pricings: dict) -> None:
 def get_encoding_for_model(model: str, pricings: dict) -> tiktoken.Encoding:
     validate_model(model,pricings)
     try:
+        logger.info("Loaded tiktoken encoding for model '%s'.", model)
         return tiktoken.encoding_for_model(model)
     except KeyError:
-        logger.warning("Error getting encoding for model '%s'. Using fallback 'cl100k_base'.", model)
+        logger.warning("No tiktoken encoding for model '%s'. Using fallback 'cl100k_base'.", model)
         return FALLBACK_ENCODING #cl100k_base
 
 def count_tokens(text: str, model: str, pricings: dict) -> tuple [list[int], int]:
@@ -49,10 +51,9 @@ def calculate_cost(model: str, token_count: int, pricings: dict) -> float:
         raise ValueError(
             f"Configuration Error: Missing 'input' token price for model '{model}'."
         )#Only taking input cost for now. cost per million tokens
-    cost = model_pricing["input"]
-    return token_count * cost / 1000000
+    return token_count * model_pricing["input"] / 1000000
 
-def get_closest_model_name(userinput: str, pricings: dict) -> str:
+def get_closest_model_name(userinput: str, pricings: dict) -> str | None:
     available_models = get_models(pricings)
     result = process.extractOne(
         userinput,
@@ -60,9 +61,14 @@ def get_closest_model_name(userinput: str, pricings: dict) -> str:
         scorer=fuzz.WRatio,
         score_cutoff=65,
     )
-    return result[0] if result else None
-    
+    return result[0] if result else None 
+
 def main():
+
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="%(levelname)s [%(name)s]: %(message)s",
+    ) 
     pricings = load_pricings()
     models = get_models(pricings)
 
@@ -71,24 +77,25 @@ def main():
         print(f"{i}. {model}")
 
 #MATCH USERINPUT
-    model = input("Enter the model: ").lower().strip()
-    if not model:
+    model_prompt= input("Enter the model: ").lower().strip()
+    if not model_prompt:
         print("Error: Model cannot be empty.")
         return
-
-    if model not in models:
-        closest_model = get_closest_model_name(model, pricings)
+    model = model_prompt
+    if model_prompt not in models:
+        closest_model = get_closest_model_name(model_prompt, pricings)
         if closest_model:
-            confirm = (input(f"Model '{model}' not found. Did you mean '{closest_model}'? (y/n): ").lower().strip())            
+            confirm = (input(f"Model '{model_prompt}' not found. Did you mean '{closest_model}'? (y/n): ").lower().strip())            
             if confirm == 'y':
                 model = closest_model
             else:
                 print("Exiting.")
                 return
         else:
-            print(f"Model '{model}' not found and no close matches available. Exiting.")
+            print(f"Model '{model_prompt}' not found and no close matches available. Exiting.")
             return
 
+    
 #TEXT  
     text = input("Enter the text to analyze: ").strip()
     if not text:
