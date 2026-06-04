@@ -8,7 +8,7 @@ A Python Command Line Interface (CLI) for analyzing text token usage using tikto
 -**Matching Model Suggestion**: Uses 'rapidfuzz' library to suggest the closest matching model name using fuzzy string matching if you make a typo in model name input prompt.
 
 ## Prerequisites
-- **Python**: Version 3.8 or higher
+- **Python**: Version 3.10 or higher
 - Install the required dependencies
 
 ## Configuration Setup
