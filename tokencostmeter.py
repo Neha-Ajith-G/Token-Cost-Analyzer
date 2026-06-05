@@ -197,6 +197,7 @@ def main():
     print(f"Token count: {token_count}")
     print(f"Estimated cost: ${original_cost:.6f}")
     print("\nCompressed text:")
+    print("\n" + compressed + "\n")
     # print(f"Tokens: {compressed_tokens}")
     print(f"Token count: {compressed_token_count}")
     print(f"Estimated cost: ${compressed_cost:.6f}")
