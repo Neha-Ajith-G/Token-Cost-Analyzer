@@ -121,12 +121,30 @@ def compress_text(text: str) -> str:
 
     return text
 
-def get_multiline_input() -> str:
-    print("Enter text (Ctrl+D to finish, Ctrl+Z on Windows):")
-    return sys.stdin.read().strip()
+def get_text_input() -> str:
+    print("\nInput method:")
+    print("  1. Type / paste text")
+    print("  2. File path")
+    
+    choice = input("Choose (1/2): ").strip()
+    
+    if choice == '2':
+        path = input("Enter file path: ").strip()
+        try:
+            with open(path, 'r') as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            print(f"Error: File '{path}' not found.")
+            return ''
+        except PermissionError:
+            print(f"Error: Cannot read '{path}' — permission denied.")
+            return ''
+    else:
+        print("Enter text (Ctrl+D to finish, Ctrl+Z on Windows):")
+        return sys.stdin.read().strip()
 
 def main():
-
+    
     logging.basicConfig(
         level=logging.WARNING,
         format="%(levelname)s [%(name)s]: %(message)s",
@@ -159,7 +177,7 @@ def main():
 
     
 #TEXT  
-    text = get_multiline_input()
+    text = get_text_input()
     if not text:
         print("Error: Text cannot be empty.")
         return
