@@ -1,0 +1,9 @@
+
+Hope you are doing well. I am writing to report that the app has been crashing 
+twenty three times today!!! I wanted to let you know that this started happening 
+after the update three days ago. Please note that I have tried restarting the 
+app five times but the API keeps returning errors!!!
+
+Best regards,
+John Smith
+Senior Manager
