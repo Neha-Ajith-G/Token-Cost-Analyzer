@@ -1,5 +1,7 @@
 tiktoken>=0.5.0
 rapidfuzz>=3.0.0
+fastapi
+uvicorn
 
 # This file lists the dependencies for the Token Cost Analyzer project. It includes:
 # - tiktoken: A library for tokenizing text, which is essential for counting tokens in the input text.
