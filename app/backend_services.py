@@ -2,11 +2,14 @@ import json
 import logging
 import tiktoken
 import re
+from pathlib import Path
 
 
 logger = logging.getLogger(__name__)
 #GLOBAL VARIABLES
-PRICING_DATA_PATH = "pricings.json"
+PRICING_DATA_PATH = (
+    Path(__file__).parent / "pricings.json"
+)
 FALLBACK_ENCODING= tiktoken.get_encoding("cl100k_base")
 
 def load_pricings(path: str = PRICING_DATA_PATH) -> dict:
