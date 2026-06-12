@@ -1,0 +1,8 @@
+services:
+  token-analyzer:
+    build: .
+    container_name: token-analyzer
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
