@@ -11,7 +11,7 @@ class AnalysisRecord(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     text = Column(String, nullable=False)
-    model = Column(String, nullable=False)
+    model = Column(String, nullable=False, index=True)
 
     original_token_count = Column(Integer, nullable=False)
     original_cost = Column(Float, nullable=False)

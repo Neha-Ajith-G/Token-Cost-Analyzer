@@ -15,7 +15,7 @@ def load_pricings(path: str = PRICING_DATA_PATH) -> dict:
             return json.load(f)
     except FileNotFoundError:
         logger.error("Pricing configuration file not found at path: '%s'", path)
-        raise FileNotFoundError(f"Pricing file not found: '{path}'")
+        raise FileNotFoundError(f"Pricing configuration unavailable at {path}")
     except json.JSONDecodeError as e:
         logger.error("Invalid JSON format in pricing file: %s", e)
         raise ValueError(f"Invalid JSON format in pricing file: {e}")
@@ -23,10 +23,7 @@ def load_pricings(path: str = PRICING_DATA_PATH) -> dict:
 def validate_model(model: str, pricings: dict) -> None:
     if model not in pricings:
         available = ", ".join(pricings.keys())
-        raise ValueError(
-            f"Model '{model}' not found. Available models: {available}"
-        )
-    
+        raise ValueError(f"Invalid model.\n Available Models:\t {available}")
 def get_encoding_for_model(model: str, pricings: dict) -> tiktoken.Encoding:
     validate_model(model,pricings)
     try:
@@ -104,5 +101,22 @@ def compress_text(text: str) -> str:
 
     return text
 
-
-
+def generate_analysis(text: str, model: str) -> dict:
+    pricings = load_pricings()
+    compressed = compress_text(text)
+    original_token_count = count_tokens(text, model, pricings)[1]
+    original_cost = calculate_cost(model, original_token_count, pricings)
+    compressed_token_count = count_tokens(compressed, model, pricings)[1]
+    compressed_cost = calculate_cost(model, compressed_token_count, pricings)
+    return {
+            "original": {
+                "text": text,
+                "token_count": original_token_count,
+                "estimated_cost": original_cost
+            },
+            "optimized": {
+                "text": compressed,
+                "token_count": compressed_token_count,
+                "estimated_cost": compressed_cost
+            }
+        }
