@@ -8,28 +8,28 @@ import streamlit as st
 import requests
 import pandas as pd
 
-# ── Configuration ──────────────────────────────────────────────────────────────
+#Configuration 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
 
-# ── Page setup ─────────────────────────────────────────────────────────────────
+#Page setup 
 st.set_page_config(
     page_title="Token Cost Analyzer",
-    page_icon="⬡",
+    page_icon="◌",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ── Global styles ──────────────────────────────────────────────────────────────
+#Global styles 
 st.markdown("""
 <style>
-/* ---------- font & base ---------- */
+/* font & base */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
 }
 
-/* ---------- sidebar ---------- */
+/* sidebar  */
 [data-testid="stSidebar"] {
     background: #0d0d0d;
     border-right: 1px solid #1f1f1f;
@@ -43,12 +43,12 @@ html, body, [class*="css"] {
     padding: 6px 0;
 }
 
-/* ---------- main canvas ---------- */
+/*  main canvas */
 [data-testid="stAppViewContainer"] {
     background: #f7f6f2;
 }
 
-/* ---------- page title ---------- */
+/*  page title */
 .tca-title {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 2rem;
@@ -65,7 +65,7 @@ html, body, [class*="css"] {
     margin-top: 2px;
 }
 
-/* ---------- metric cards ---------- */
+/* metric cards  */
 .metric-card {
     background: #ffffff;
     border: 1px solid #e8e6e0;
@@ -97,7 +97,7 @@ html, body, [class*="css"] {
     margin-top: 2px;
 }
 
-/* ---------- section dividers ---------- */
+/*  section dividers  */
 .section-label {
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -108,7 +108,7 @@ html, body, [class*="css"] {
     margin: 28px 0 16px;
 }
 
-/* ---------- text panels ---------- */
+/*  text panels  */
 .text-panel {
     background: #fff;
     border: 1px solid #e8e6e0;
@@ -124,7 +124,7 @@ html, body, [class*="css"] {
     overflow-y: auto;
 }
 
-/* ---------- tag badge ---------- */
+/*  tag badge  */
 .badge {
     display: inline-block;
     background: #0d0d0d;
@@ -141,7 +141,7 @@ html, body, [class*="css"] {
     color: #166534;
 }
 
-/* ---------- buttons ---------- */
+/*  buttons  */
 .stButton > button {
     border-radius: 6px;
     font-size: 0.85rem;
@@ -151,7 +151,7 @@ html, body, [class*="css"] {
 }
 .stButton > button:hover { opacity: 0.85; }
 
-/* ---------- sidebar logo mark ---------- */
+/*  sidebar logo mark  */
 .logo-mark {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 1.1rem;
@@ -164,10 +164,9 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 # API HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 
 def api_get_models() -> list[str]:
     """Return list of model names from GET /models."""
@@ -225,10 +224,9 @@ def api_delete(record_id: int) -> dict:
     r.raise_for_status()
     return r.json()
 
-
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 # UI HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 
 def metric_card(label: str, value: str, delta: str | None = None, delta_positive: bool = True):
     delta_class = "metric-delta-pos" if delta_positive else "metric-delta-neg"
@@ -255,10 +253,9 @@ def pct_reduction(original: float, optimized: float) -> float:
         return 0.0
     return (original - optimized) / original * 100
 
-
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 # SESSION STATE DEFAULTS
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 
 for key, default in {
     "analysis_result": None,
@@ -271,10 +268,9 @@ for key, default in {
     if key not in st.session_state:
         st.session_state[key] = default
 
-
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 # SIDEBAR NAVIGATION
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 
 with st.sidebar:
     st.markdown('<span class="logo-mark">⬡ TCA</span>', unsafe_allow_html=True)
@@ -284,23 +280,17 @@ with st.sidebar:
         label_visibility="collapsed",
     )
     st.markdown("---")
-    st.markdown(
-        '<span style="font-size:0.72rem;color:#555;letter-spacing:0.05em;">'
-        f'API  ·  <code style="color:#888">{BASE_URL}</code></span>',
-        unsafe_allow_html=True,
-    )
 
-
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 # PAGE: ANALYZE TEXT
-# ══════════════════════════════════════════════════════════════════════════════
+#  
 
 if page == "Analyze Text":
     st.markdown('<div class="tca-title">Token Cost Analyzer</div>', unsafe_allow_html=True)
     st.markdown('<div class="tca-sub">Estimate & optimize prompt token usage</div>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Input form ────────────────────────────────────────────────────────────
+    #  Input form 
     section_label("Input")
 
     # Load model list
@@ -332,7 +322,7 @@ if page == "Analyze Text":
         st.markdown("<br>", unsafe_allow_html=True)
         analyze_clicked = st.button("⬡ Analyze", use_container_width=True, type="primary")
 
-    # ── Run analysis ──────────────────────────────────────────────────────────
+    #  Run analysis 
     if analyze_clicked:
         if not input_text.strip():
             st.warning("Please enter some text before analyzing.")
@@ -351,7 +341,7 @@ if page == "Analyze Text":
             except Exception as e:
                 st.error(f"Request failed: {e}")
 
-    # ── Display results ───────────────────────────────────────────────────────
+    #  Display results 
     result = st.session_state.analysis_result
 
     if result:
@@ -399,7 +389,7 @@ if page == "Analyze Text":
             st.markdown('<span class="badge badge-green">Optimized</span>', unsafe_allow_html=True)
             st.markdown(f'<div class="text-panel">{opt_text}</div>', unsafe_allow_html=True)
 
-        # ── Save button ───────────────────────────────────────────────────────
+        #  Save button 
         section_label("Save")
         if st.button("Save this analysis →", use_container_width=False):
             try:
@@ -415,16 +405,14 @@ if page == "Analyze Text":
                 st.error(f"Save failed: {e}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # PAGE: SAVED ANALYSES
-# ══════════════════════════════════════════════════════════════════════════════
 
 elif page == "Saved Analyses":
     st.markdown('<div class="tca-title">Saved Analyses</div>', unsafe_allow_html=True)
     st.markdown('<div class="tca-sub">Browse, inspect, edit, or delete saved records</div>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Filters + refresh ─────────────────────────────────────────────────────
+    #  Filters + refresh 
     section_label("Filters")
     f_col1, f_col2 = st.columns([2, 1], gap="medium")
     with f_col1:
@@ -435,7 +423,7 @@ elif page == "Saved Analyses":
             st.session_state.selected_record_id = None
             st.session_state.edit_mode_id = None
 
-    # ── Fetch records ─────────────────────────────────────────────────────────
+    #  Fetch records 
     try:
         with st.spinner("Loading records…"):
             records = api_get_all(model_filter=filter_model.strip() or None)
@@ -463,7 +451,7 @@ elif page == "Saved Analyses":
         section_label("Records")
         st.dataframe(df, use_container_width=True, hide_index=True)
 
-        # ── Select record ─────────────────────────────────────────────────────
+        #  Select record 
         section_label("Inspect / Edit / Delete")
         record_ids = [r["id"] for r in records]
         selected_id = st.selectbox(
@@ -482,7 +470,7 @@ elif page == "Saved Analyses":
             rec = None
 
         if rec:
-            # ── Detail view ───────────────────────────────────────────────────
+            #  Detail view 
             with st.expander(f"Record #{rec['id']} — detail", expanded=True):
                 d1, d2, d3, d4 = st.columns(4)
                 with d1:
@@ -505,7 +493,7 @@ elif page == "Saved Analyses":
                     st.markdown('<span class="badge badge-green">Optimized text</span>', unsafe_allow_html=True)
                     st.markdown(f'<div class="text-panel">{rec["optimized_text"]}</div>', unsafe_allow_html=True)
 
-            # ── Action buttons ────────────────────────────────────────────────
+            #  Action buttons 
             act_col1, act_col2, _ = st.columns([1, 1, 4], gap="small")
             with act_col1:
                 edit_clicked = st.button("✏ Edit record", use_container_width=True)
@@ -515,7 +503,7 @@ elif page == "Saved Analyses":
             if edit_clicked:
                 st.session_state.edit_mode_id = selected_id
 
-            # ── Edit form ─────────────────────────────────────────────────────
+            #  Edit form 
             if st.session_state.edit_mode_id == selected_id:
                 section_label("Edit record")
                 with st.form("edit_form"):
@@ -542,7 +530,7 @@ elif page == "Saved Analyses":
                         except Exception as e:
                             st.error(f"Update failed: {e}")
 
-            # ── Delete confirmation ───────────────────────────────────────────
+            #  Delete confirmation 
             if delete_clicked:
                 st.session_state[f"confirm_delete_{selected_id}"] = True
 
@@ -570,10 +558,7 @@ elif page == "Saved Analyses":
                         st.session_state[f"confirm_delete_{selected_id}"] = False
                         st.rerun()
 
-
-# ══════════════════════════════════════════════════════════════════════════════
 # PAGE: ABOUT
-# ══════════════════════════════════════════════════════════════════════════════
 
 elif page == "About":
     st.markdown('<div class="tca-title">About</div>', unsafe_allow_html=True)
@@ -592,17 +577,17 @@ Paste any prompt text, pick a model, and TCA returns:
 Use **Saved Analyses** to build a history of prompts you've measured, compare token efficiency across models, and iterate toward leaner, cheaper prompts.
     """)
 
-    section_label("API endpoints")
-    st.markdown(f"""
-| Method | Path | Purpose |
-|--------|------|---------|
-| `GET` | `/models` | List available models |
-| `POST` | `/analyze` | Analyze without saving |
-| `POST` | `/analyzedtexts` | Analyze and save |
-| `GET` | `/analyzedtexts` | List all saved records |
-| `GET` | `/analyzedtexts/{{id}}` | Fetch one record |
-| `PUT` | `/analyzedtexts/{{id}}` | Update a record |
-| `DELETE` | `/analyzedtexts/{{id}}` | Delete a record |
+#     section_label("API endpoints")
+#     st.markdown(f"""
+# | Method | Path | Purpose |
+# |--------|------|---------|
+# | `GET` | `/models` | List available models |
+# | `POST` | `/analyze` | Analyze without saving |
+# | `POST` | `/analyzedtexts` | Analyze and save |
+# | `GET` | `/analyzedtexts` | List all saved records |
+# | `GET` | `/analyzedtexts/{{id}}` | Fetch one record |
+# | `PUT` | `/analyzedtexts/{{id}}` | Update a record |
+# | `DELETE` | `/analyzedtexts/{{id}}` | Delete a record |
 
-Backend base URL: `{BASE_URL}`
-    """)
+# Backend base URL: `{BASE_URL}`
+#     """)

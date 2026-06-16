@@ -7,3 +7,8 @@ app five times but the API keeps returning errors!!!
 Best regards,
 John Smith
 Senior Manager
+
+{
+  "text": "Hope you are doing well. I am writing to summarize the findings of a fraud detection review involving multiple claims submitted during the previous quarter. Several submissions contained inconsistencies in accident descriptions, repair invoices, and witness statements. The investigation team flagged twenty seven claims for further verification and recommended temporary suspension of claim settlements until supporting evidence is validated. Best regards, Fraud Investigation Unit",
+  "model": "gpt-4o-mini"
+}
