@@ -10,10 +10,20 @@ from sqlalchemy.orm import Session
 from app.db import engine, get_db
 from app.models import AnalysisRecord
 from app.db import Base
+import os
+
+#disable docs in production
+# docs_url = None if os.getenv("ENV") == "production" else "/docs"
+# redoc_url = None if os.getenv("ENV") == "production" else "/redoc"
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
-
+#disable docs
+# app = FastAPI(
+#     title="Token Cost Analyzer",
+#     docs_url=docs_url,
+#     redoc_url=redoc_url,
+# )
 @app.get("/")
 def home():
     return {"message": "Welcome to the Token Cost Analyzer."}

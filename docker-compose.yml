@@ -2,6 +2,8 @@ version: "3.9"
 
 services:
   token-analyzer:
+    # environment:
+    #   - ENV=production
     build:
       context: .
       dockerfile: Dockerfile
